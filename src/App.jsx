@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import Message from './Message.jsx';
 import MessageList from './MessageList.jsx';
-import ChatBar from './ChatBar.jsx';
-import NewMessageForm from './NewMessageForm.jsx';
 
 
 export default class App extends Component {
@@ -24,7 +22,9 @@ export default class App extends Component {
   }
 
   createMessage(message) {
-    this.setState({messages: message});
+    const oldMessageList = this.state.messages;
+    const newMessageList = [...oldMessageList, message];
+    this.setState({messages: newMessageList});
   }
 
   render() {
