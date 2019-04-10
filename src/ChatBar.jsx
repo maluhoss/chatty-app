@@ -23,8 +23,7 @@ export default class ChatBar extends Component {
     }
 
   render() {
-
-    return ( //change id to ref
+    return (
       <footer className="chatbar">
         <input ref="username" className="chatbar-username" name="username" defaultValue={this.props.user.name} />
         <input ref="message" onKeyPress={this.onKeyPress} className="chatbar-message" name="content" placeholder="Type a message and hit ENTER" />
