@@ -28,7 +28,7 @@ export default class App extends Component {
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList/>
-        <ChatBar user={this.state.currentUser}/>
+        <ChatBar user={this.state.currentUser} />
       </React.Fragment>
     );
   }
