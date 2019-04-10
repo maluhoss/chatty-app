@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Message from './Message.jsx';
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
+import NewMessageForm from './NewMessageForm.jsx';
 
 
 export default class App extends Component {
@@ -19,6 +20,11 @@ export default class App extends Component {
           content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
         }]
       };
+    this.createMessage = this.createMessage.bind(this);
+  }
+
+  createMessage(message) {
+    this.setState({messages: message});
   }
 
   render() {
