@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Message from './Message.jsx';
 
 export default class MessageList extends Component {
+
   render() {
     let messages = this.props.messages;
 
@@ -11,7 +12,7 @@ export default class MessageList extends Component {
 
     return (
       <main className="messages">
-        {modifiedMessages}
+       {modifiedMessages}
       </main>
     );
   }

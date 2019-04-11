@@ -11,15 +11,26 @@ export default class App extends Component {
       currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
        messages: []
       };
-    // this.createMessage = this.createMessage.bind(this);
+    this.createMessage = this.createMessage.bind(this);
   }
 
   componentDidMount() {
   console.log("componentDidMount <App />");
   this.socket = new WebSocket('ws://localhost:3001');
   this.socket.onopen = function (event) {
-  console.log("Connected to server");
+    console.log("Connected to server");
   };
+
+  this.socket.onmessage = (event) => {
+    console.log(event.data);
+    const parsedMessageFromServer = JSON.parse(event.data);
+
+      this.createMessage(
+        {id: parsedMessageFromServer.id,
+        username: parsedMessageFromServer.username,
+        content: parsedMessageFromServer.content
+      });
+    };
 
   setTimeout(() => {
     console.log("Simulating incoming message");
@@ -32,11 +43,11 @@ export default class App extends Component {
   }, 3000);
 }
 
-  // createMessage(message) {
-  //   const oldMessageList = this.state.messages;
-  //   const newMessageList = [...oldMessageList, message];
-  //   this.setState({messages: newMessageList});
-  // }
+  createMessage(message) {
+    const oldMessageList = this.state.messages;
+    const newMessageList = [...oldMessageList, message];
+    this.setState({messages: newMessageList});
+  }
 
   render() {
     return (
@@ -44,8 +55,8 @@ export default class App extends Component {
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
-        <MessageList messages={this.state.messages}/>
-        <ChatBar user={this.state.currentUser} socket={this.socket}/>
+        <MessageList messages={this.state.messages} socket={this.socket}/>
+        <ChatBar user={this.state.currentUser} socket={this.socket} createMessage={this.createMessage}/>
       </React.Fragment>
     );
   }

@@ -12,12 +12,6 @@ export default class ChatBar extends Component {
         const input = event.target;
         const usernameInput = this.refs.username;
 
-        // this.props.createMessage(
-        //   {id: Date.now(),
-        //   username: usernameInput.value,
-        //   content: input.value
-        // });
-
         this.props.socket.send(JSON.stringify({
           type: "sendMessage",
           content: input.value,
@@ -25,6 +19,7 @@ export default class ChatBar extends Component {
         }));
 
         input.value = '';
+
       }
     }
 
