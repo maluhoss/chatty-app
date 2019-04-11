@@ -21,11 +21,16 @@ export default class App extends Component {
           content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
         }]
       };
-    this.createMessage = this.createMessage.bind(this);
+    // this.createMessage = this.createMessage.bind(this);
   }
 
   componentDidMount() {
   console.log("componentDidMount <App />");
+  this.socket = new WebSocket('ws://localhost:3001');
+  this.socket.onopen = function (event) {
+  console.log("Connected to server");
+  };
+
   setTimeout(() => {
     console.log("Simulating incoming message");
     // Add a new message to the list of messages in the data store
@@ -37,11 +42,11 @@ export default class App extends Component {
   }, 3000);
 }
 
-  createMessage(message) {
-    const oldMessageList = this.state.messages;
-    const newMessageList = [...oldMessageList, message];
-    this.setState({messages: newMessageList});
-  }
+  // createMessage(message) {
+  //   const oldMessageList = this.state.messages;
+  //   const newMessageList = [...oldMessageList, message];
+  //   this.setState({messages: newMessageList});
+  // }
 
   render() {
     return (
@@ -50,7 +55,7 @@ export default class App extends Component {
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList messages={this.state.messages}/>
-        <ChatBar user={this.state.currentUser} createMessage={this.createMessage}/>
+        <ChatBar user={this.state.currentUser} socket={this.socket}/>
       </React.Fragment>
     );
   }
