@@ -7,7 +7,15 @@ export default class MessageList extends Component {
     let messages = this.props.messages;
 
     let modifiedMessages = messages.map(function(message) {
-      return <Message username={message.username} content={message.content} key={message.id}/>
+      if (message.type === 'sendMessage') {
+        return (<Message username={message.username} content={message.content} key={message.id}/>)
+      } else {
+        return (
+          <div key={message.id} className="notification">
+           <span className="notification-content">{message.oldUsername} changed their name to {message.newUsername}.</span>
+          </div>
+        );
+      }
     })
 
     return (
