@@ -8,7 +8,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: 'Bob'}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: 'Anonymous'}, // optional. if currentUser is not defined, it means the user is Anonymous
        messages: []
       };
     this.createMessage = this.createMessage.bind(this);
@@ -25,10 +25,10 @@ export default class App extends Component {
     // console.log(event.data);
     const parsedMessageFromServer = JSON.parse(event.data);
 
-    if (parsedMessageFromServer.type === 'sendMessage') {
+    if (parsedMessageFromServer.type === 'incomingMessage') {
       this.createMessage(
         {
-        type: 'sendMessage',
+        type: parsedMessageFromServer.type,
         id: parsedMessageFromServer.id,
         username: parsedMessageFromServer.username,
         content: parsedMessageFromServer.content
@@ -36,7 +36,7 @@ export default class App extends Component {
     } else {
       // console.log(parsedMessageFromServer);
       this.createMessage({
-        type: 'notification',
+        type: parsedMessageFromServer.type,
         id: parsedMessageFromServer.id,
         oldUsername: parsedMessageFromServer.oldUsername,
         newUsername: parsedMessageFromServer.newUsername
@@ -48,7 +48,7 @@ export default class App extends Component {
   setTimeout(() => {
     console.log("Simulating incoming message");
     // Add a new message to the list of messages in the data store
-    const newMessage = {type: 'sendMessage', id: 3, username: "Michelle", content: "Hello there!"};
+    const newMessage = {type: 'incomingMessage', id: 3, username: "Michelle", content: "Hello there!"};
     const messages = this.state.messages.concat(newMessage)
     // Update the state of the app component.
     // Calling setState will trigger a call to render() in App and all child components.

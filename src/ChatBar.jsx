@@ -14,7 +14,7 @@ export default class ChatBar extends Component {
 
   onBlur = (event) => {
     const usernameObj = {
-      type: 'notification',
+      type: 'postNotification',
       oldUsername: this.props.user.name,
       newUsername: this.state.currentUser.name
     }
@@ -29,7 +29,7 @@ export default class ChatBar extends Component {
         const usernameInput = this.refs.username;
 
         this.props.socket.send(JSON.stringify({
-          type: "sendMessage",
+          type: "postMessage",
           content: input.value,
           username: usernameInput.value
         }));

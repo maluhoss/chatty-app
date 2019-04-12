@@ -23,11 +23,11 @@ wss.on('connection', (ws) => {
   ws.on('message', function incoming(data) {
     const parsedData = JSON.parse(data);
 
-    if(parsedData.type === 'sendMessage'){
+    if(parsedData.type === 'postMessage'){
       console.log(`User ${parsedData.username} said ${parsedData.content}`);
 
       const messageFromServer = {
-          type: 'sendMessage',
+          type: 'incomingMessage',
           id: uuid(),
           username: parsedData.username,
           content: parsedData.content
@@ -40,11 +40,17 @@ wss.on('connection', (ws) => {
       })
     } else {
       // console.log(parsedData);
-      parsedData["id"] = uuid();
+      // parsedData["id"] = uuid();
+      const messageFromServer = {
+          type: 'incomingNotification',
+          id: uuid(),
+          oldUsername: parsedData.oldUsername,
+          newUsername: parsedData.newUsername
+        }
 
       wss.clients.forEach(function (client) {
         if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(parsedData));
+          client.send(JSON.stringify(messageFromServer));
         }
       })
 

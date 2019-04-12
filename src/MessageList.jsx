@@ -7,7 +7,7 @@ export default class MessageList extends Component {
     let messages = this.props.messages;
 
     let modifiedMessages = messages.map(function(message) {
-      if (message.type === 'sendMessage') {
+      if (message.type === 'incomingMessage') {
         return (<Message username={message.username} content={message.content} key={message.id}/>)
       } else {
         return (
