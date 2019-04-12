@@ -33,7 +33,7 @@ export default class App extends Component {
         username: parsedMessageFromServer.username,
         content: parsedMessageFromServer.content
       });
-    } else {
+    } else if (parsedMessageFromServer.type === 'incomingNotification') {
       // console.log(parsedMessageFromServer);
       this.createMessage({
         type: parsedMessageFromServer.type,
@@ -42,6 +42,8 @@ export default class App extends Component {
         newUsername: parsedMessageFromServer.newUsername
       });
       this.setState({currentUser: {name:parsedMessageFromServer.newUsername}})
+    } else {
+      this.setState({onlineUsers: parsedMessageFromServer.onlineUsers});
     }
   };
 
@@ -67,6 +69,7 @@ export default class App extends Component {
       <React.Fragment>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
+          <span className="navbar-users">{this.state.onlineUsers} Users Online</span>
         </nav>
         <MessageList messages={this.state.messages} socket={this.socket}/>
         <ChatBar user={this.state.currentUser} socket={this.socket} createMessage={this.createMessage}/>

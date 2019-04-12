@@ -9,7 +9,7 @@ export default class MessageList extends Component {
     let modifiedMessages = messages.map(function(message) {
       if (message.type === 'incomingMessage') {
         return (<Message username={message.username} content={message.content} key={message.id}/>)
-      } else {
+      } else if (message.type === 'incomingNotification') {
         return (
           <div key={message.id} className="notification">
            <span className="notification-content">{message.oldUsername} changed their name to {message.newUsername}.</span>

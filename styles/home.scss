@@ -75,9 +75,15 @@ body {
   top: 0;
 }
 
+.navbar-users {
+  float:right;
+  display: inline;
+  margin: 21px 0px;
+}
+
 .navbar-brand {
   color: inherit;
-  display: block;
+  display: inline-block;
   float: left;
   font-weight: 700;
   font-size: 28px;
