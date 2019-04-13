@@ -21,64 +21,53 @@ const wss = new SocketServer({ server });
 wss.on('connection', (ws) => {
   console.log('Client connected');
 
-  wss.clients.forEach(function (client) {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify({
+  function broadcast(clientObject) {
+    wss.clients.forEach(function (client) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(clientObject));
+      }
+    });
+  }
+
+  const onlineUsersObject = {
             id: uuid(),
             type: 'clientcount',
             onlineUsers: wss.clients.size
-          }));
-        }
-      });
+          };
+
+  broadcast(onlineUsersObject);
 
   ws.on('message', function incoming(data) {
-    const parsedData = JSON.parse(data);
+    const parsedClientMessage = JSON.parse(data);
+    let messageFromServer = {};
 
-    if(parsedData.type === 'postMessage'){
-      console.log(`User ${parsedData.username} said ${parsedData.content}`);
+    if(parsedClientMessage.type === 'postMessage'){
+      console.log(`User ${parsedClientMessage.username} said ${parsedClientMessage.content}`);
 
-      const messageFromServer = {
+      messageFromServer = {
           type: 'incomingMessage',
           id: uuid(),
-          username: parsedData.username,
-          content: parsedData.content
-        }
+          username: parsedClientMessage.username,
+          content: parsedClientMessage.content
+        };
 
-      wss.clients.forEach(function (client) {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(messageFromServer));
-        }
-      })
+      broadcast(messageFromServer);
     } else {
-      // console.log(parsedData);
-      // parsedData["id"] = uuid();
-      const messageFromServer = {
+      messageFromServer = {
           type: 'incomingNotification',
           id: uuid(),
-          oldUsername: parsedData.oldUsername,
-          newUsername: parsedData.newUsername
-        }
+          oldUsername: parsedClientMessage.oldUsername,
+          newUsername: parsedClientMessage.newUsername
+        };
 
-      wss.clients.forEach(function (client) {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(messageFromServer));
-        }
-      })
-    };
+      broadcast(messageFromServer);
+    }
   });
 
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => {
     console.log('Client disconnected')
-    wss.clients.forEach(function (client) {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify({
-            id: uuid(),
-            type: 'clientcount',
-            onlineUsers: wss.clients.size
-          }));
-        }
-      });
+    broadcast(onlineUsersObject);
   });
 });
