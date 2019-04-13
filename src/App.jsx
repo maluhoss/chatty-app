@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Message from './Message.jsx';
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
+import NavBar from './NavBar.jsx';
 
 
 export default class App extends Component {
@@ -67,10 +68,7 @@ export default class App extends Component {
   render() {
     return (
       <React.Fragment>
-        <nav className="navbar">
-          <a href="/" className="navbar-brand">Chatty</a>
-          <span className="navbar-users">{this.state.onlineUsers} Users Online</span>
-        </nav>
+        <NavBar onlineUsers={this.state.onlineUsers}/>
         <MessageList messages={this.state.messages} socket={this.socket}/>
         <ChatBar user={this.state.currentUser} socket={this.socket} createMessage={this.createMessage}/>
       </React.Fragment>
