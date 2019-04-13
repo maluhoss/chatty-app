@@ -1,3 +1,4 @@
+//Importing all smaller React Components
 import React, {Component} from 'react';
 import Message from './Message.jsx';
 import Notification from './Notification.jsx';
@@ -5,57 +6,61 @@ import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
 import NavBar from './NavBar.jsx';
 
-
+//App Component to render all other React components and attach to div tag on html file
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       currentUser: {name: 'Anonymous'},
-       messages: []
-      };
+      messages: []
+    };
   }
 
   componentDidMount() {
+    //Connecting to the websocket server to receive data from it
     this.socket = new WebSocket('ws://localhost:3001');
-    this.socket.onopen = function (event) {
-    console.log("Connected to server");
+
+    //Upon connection with websocket server, print connected to server
+    this.socket.onopen = (event) => {
+      console.log('Connected to server');
+    };
+
+    //Upon receiving a message from websocket server (user message, notification or online user info)
+    this.socket.onmessage = (event) => {
+      const parsedMessageFromServer = JSON.parse(event.data);
+      let messageObjectToAdd = {};
+
+      //Behaviour for user message data from websocker server
+      if (parsedMessageFromServer.type === 'incomingMessage') {
+        messageObjectToAdd = {
+          type: parsedMessageFromServer.type,
+          id: parsedMessageFromServer.id,
+          username: parsedMessageFromServer.username,
+          content: parsedMessageFromServer.content
+        };
+
+        this.addMessage(messageObjectToAdd);
+
+      //Behaviour for notification data from websocket server
+      } else if (parsedMessageFromServer.type === 'incomingNotification') {
+        messageObjectToAdd = {
+          type: parsedMessageFromServer.type,
+          id: parsedMessageFromServer.id,
+          oldUsername: parsedMessageFromServer.oldUsername,
+          newUsername: parsedMessageFromServer.newUsername
+        };
+
+        this.addMessage(messageObjectToAdd);
+        this.setState({currentUser: {name:parsedMessageFromServer.newUsername}});
+
+      // Behaviour for online user data from websocket server
+      } else {
+        this.setState({onlineUsers: parsedMessageFromServer.onlineUsers});
+      }
+    };
   }
 
-  this.socket.onmessage = (event) => {
-    const parsedMessageFromServer = JSON.parse(event.data);
-
-    if (parsedMessageFromServer.type === 'incomingMessage') {
-      this.addMessage(
-        {
-        type: parsedMessageFromServer.type,
-        id: parsedMessageFromServer.id,
-        username: parsedMessageFromServer.username,
-        content: parsedMessageFromServer.content
-      });
-    } else if (parsedMessageFromServer.type === 'incomingNotification') {
-      this.addMessage({
-        type: parsedMessageFromServer.type,
-        id: parsedMessageFromServer.id,
-        oldUsername: parsedMessageFromServer.oldUsername,
-        newUsername: parsedMessageFromServer.newUsername
-      });
-      this.setState({currentUser: {name:parsedMessageFromServer.newUsername}})
-    } else {
-      this.setState({onlineUsers: parsedMessageFromServer.onlineUsers});
-    }
-  };
-
-  setTimeout(() => {
-    console.log("Simulating incoming message");
-    // Add a new message to the list of messages in the data store
-    const newMessage = {type: 'incomingMessage', id: 3, username: "Michelle", content: "Hello there!"};
-    const messages = this.state.messages.concat(newMessage)
-    // Update the state of the app component.
-    // Calling setState will trigger a call to render() in App and all child components.
-    this.setState({messages: messages})
-  }, 3000);
-}
-
+  //Add User message or Notification data to messages object for display on page through MessageList component
   addMessage = (message) => {
     const oldMessageList = this.state.messages;
     const newMessageList = [...oldMessageList, message];
