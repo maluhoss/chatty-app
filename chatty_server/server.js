@@ -69,7 +69,13 @@ wss.on('connection', (ws) => {
 
   // Set up a callback for when client closes the socket, print to console and send info about number of online users to all clients
   ws.on('close', () => {
-    console.log('Client disconnected')
+    onlineUsersObject = {
+      id: uuid(),
+      type: 'clientcount',
+      onlineUsers: wss.clients.size
+    };
+
+    console.log('Client disconnected');
     broadcast(onlineUsersObject);
   });
 })
