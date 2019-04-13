@@ -15,9 +15,7 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer({ server });
 
-// Set up a callback that will run when a client connects to the server
-// When a client connects they are assigned a socket, represented by
-// the ws parameter in the callback.
+// Set up a callback that will run when a client connects to the server. When client connects, print to console that client connected and send info about number of online users to all clients
 wss.on('connection', (ws) => {
   console.log('Client connected');
 
@@ -29,45 +27,49 @@ wss.on('connection', (ws) => {
     });
   }
 
-  const onlineUsersObject = {
-            id: uuid(),
-            type: 'clientcount',
-            onlineUsers: wss.clients.size
-          };
+  let onlineUsersObject = {
+    id: uuid(),
+    type: 'clientcount',
+    onlineUsers: wss.clients.size
+  };
 
   broadcast(onlineUsersObject);
 
+  //Behaviour when data (new user message or username change notification) received from client - send modified data object with unique id back to client
   ws.on('message', function incoming(data) {
     const parsedClientMessage = JSON.parse(data);
     let messageFromServer = {};
 
+    //For new user message
     if(parsedClientMessage.type === 'postMessage'){
       console.log(`User ${parsedClientMessage.username} said ${parsedClientMessage.content}`);
 
       messageFromServer = {
-          type: 'incomingMessage',
-          id: uuid(),
-          username: parsedClientMessage.username,
-          content: parsedClientMessage.content
-        };
+        type: 'incomingMessage',
+        id: uuid(),
+        username: parsedClientMessage.username,
+        content: parsedClientMessage.content
+      };
 
       broadcast(messageFromServer);
+
+      //For username change notification
     } else {
       messageFromServer = {
-          type: 'incomingNotification',
-          id: uuid(),
-          oldUsername: parsedClientMessage.oldUsername,
-          newUsername: parsedClientMessage.newUsername
-        };
+        type: 'incomingNotification',
+        id: uuid(),
+        oldUsername: parsedClientMessage.oldUsername,
+        newUsername: parsedClientMessage.newUsername
+      };
 
       broadcast(messageFromServer);
     }
   });
 
 
-  // Set up a callback for when a client closes the socket. This usually means they closed their browser.
+  // Set up a callback for when client closes the socket, print to console and send info about number of online users to all clients
   ws.on('close', () => {
     console.log('Client disconnected')
     broadcast(onlineUsersObject);
   });
-});
+})
