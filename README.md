@@ -5,9 +5,9 @@ A React-based app that allows multiple clients to send messages to each other on
 
 ### Screenshots
 
-!["Homepage of user, only 1 user"](URL)
-!["Homepage of second user, 2 users online, name change"](URL)
-!["Homepage of first user after second user leaves, 1 user online"](URL)
+!["Homepage of user, only 1 user"](https://github.com/maluhoss/chatty-app/blob/master/docs/homepage-first-user.png)
+!["Homepage of second user, 2 users online, name change"](https://github.com/maluhoss/chatty-app/blob/master/docs/Homepage-second-user.png)
+!["Homepage of first user after second user leaves, 1 user online"](https://github.com/maluhoss/chatty-app/blob/master/docs/homepage-first-user-second-user-leaves.png)
 
 ### Usage
 
