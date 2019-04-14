@@ -5,7 +5,9 @@ A React-based app that allows multiple clients to send messages to each other on
 
 ### Screenshots
 
-!["Screenshot Description"](URL)
+!["Homepage of user, only 1 user"](URL)
+!["Homepage of second user, 2 users online, name change"](URL)
+!["Homepage of first user after second user leaves, 1 user online"](URL)
 
 ### Usage
 
