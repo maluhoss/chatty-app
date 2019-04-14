@@ -23,39 +23,37 @@ export default class App extends Component {
     //Upon connection with websocket server, print connected to server
     this.socket.onopen = (event) => {
       console.log('Connected to server');
+      const userJoined = {
+        type: 'userjoined',
+        user: this.state.currentUser.name
+      };
+      this.socket.send(JSON.stringify(userJoined));
     };
 
     //Upon receiving a message from websocket server (user message, notification or online user info)
     this.socket.onmessage = (event) => {
       const parsedMessageFromServer = JSON.parse(event.data);
-      let messageObjectToAdd = {};
 
       //Behaviour for user message data from websocker server
       if (parsedMessageFromServer.type === 'incomingMessage') {
-        messageObjectToAdd = {
-          type: parsedMessageFromServer.type,
-          id: parsedMessageFromServer.id,
-          username: parsedMessageFromServer.username,
-          content: parsedMessageFromServer.content
-        };
-
-        this.addMessage(messageObjectToAdd);
+        this.addMessage(parsedMessageFromServer);
 
       //Behaviour for notification data from websocket server
       } else if (parsedMessageFromServer.type === 'incomingNotification') {
-        messageObjectToAdd = {
-          type: parsedMessageFromServer.type,
-          id: parsedMessageFromServer.id,
-          oldUsername: parsedMessageFromServer.oldUsername,
-          newUsername: parsedMessageFromServer.newUsername
-        };
-
-        this.addMessage(messageObjectToAdd);
+        this.addMessage(parsedMessageFromServer);
         this.setState({currentUser: {name:parsedMessageFromServer.newUsername}});
 
       // Behaviour for online user data from websocket server
-      } else {
+      } else if (parsedMessageFromServer.type === 'clientcount') {
         this.setState({onlineUsers: parsedMessageFromServer.onlineUsers});
+
+      //Behaviour for when new user joined
+      } else if (parsedMessageFromServer.type === 'userjoined') {
+        this.addMessage(parsedMessageFromServer);
+
+      //Behaviour for when user disconnected from websocket server
+      } else {
+        this.addMessage(parsedMessageFromServer);
       }
     };
   }

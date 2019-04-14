@@ -54,12 +54,20 @@ wss.on('connection', (ws) => {
       broadcast(messageFromServer);
 
       //For username change notification
-    } else {
+    } else if (parsedClientMessage.type === 'postNotification') {
       messageFromServer = {
         type: 'incomingNotification',
         id: uuid(),
         oldUsername: parsedClientMessage.oldUsername,
         newUsername: parsedClientMessage.newUsername
+      };
+
+      broadcast(messageFromServer);
+    } else if (parsedClientMessage.type === 'userjoined') {
+      messageFromServer = {
+        type: 'userjoined',
+        id: uuid(),
+        user: parsedClientMessage.user
       };
 
       broadcast(messageFromServer);
@@ -75,7 +83,13 @@ wss.on('connection', (ws) => {
       onlineUsers: wss.clients.size
     };
 
+    const userLeft = {
+      id: uuid(),
+      type: 'userleft',
+    };
+
     console.log('Client disconnected');
     broadcast(onlineUsersObject);
+    broadcast(userLeft);
   });
-})
+});

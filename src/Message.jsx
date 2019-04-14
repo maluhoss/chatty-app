@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 export default class Message extends Component {
   render() {
     return (
-      <div key={this.props.key} className='message'>
+      <div key={this.props.id} className='message'>
         <span className="message-username">{this.props.username}</span>
         <span className="message-content">{this.props.content}</span>
       </div>
